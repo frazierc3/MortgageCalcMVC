@@ -2,6 +2,8 @@
 using MortgageCalc.Models;
 using System.Diagnostics;
 
+using MortgageCalc.Helpers;
+
 namespace MortgageCalc.Controllers {
     public class HomeController : Controller {
         private readonly ILogger<HomeController> _logger;
@@ -18,6 +20,7 @@ namespace MortgageCalc.Controllers {
             return View();
         }
 
+        [HttpGet]
         public IActionResult App() {
             Loan loan = new();
 
@@ -29,6 +32,16 @@ namespace MortgageCalc.Controllers {
             loan.Term = 60;
 
             return View(loan);
+        }
+
+        [HttpPost]
+        [AutoValidateAntiforgeryToken]
+        public IActionResult App(Loan loan) {
+            // Calculate the loan and get the payments
+            var loanHelper = new LoanHelper();
+            Loan newLoan = loanHelper.GetPayments(loan);
+
+            return View(newLoan);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
